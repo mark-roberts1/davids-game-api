@@ -27,6 +27,8 @@ public partial class DavidsGameContext : DbContext
 
     public virtual DbSet<Team> Teams { get; set; }
 
+    public virtual DbSet<TeamSeasonLeague> TeamSeasonLeagues { get; set; }
+
     public virtual DbSet<TeamSeasonStatistic> TeamSeasonStatistics { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -243,6 +245,29 @@ public partial class DavidsGameContext : DbContext
                         j.IndexerProperty<long>("TeamId").HasColumnName("team_id");
                         j.IndexerProperty<long>("VenueId").HasColumnName("venue_id");
                     });
+        });
+
+        modelBuilder.Entity<TeamSeasonLeague>(entity =>
+        {
+            entity.HasKey(e => new { e.LeagueId, e.TeamId, e.Season }).HasName("team_season_league_pkey");
+
+            entity.ToTable("team_season_league", "game");
+
+            entity.Property(e => e.LeagueId).HasColumnName("league_id");
+            entity.Property(e => e.TeamId).HasColumnName("team_id");
+            entity.Property(e => e.Season)
+                .HasColumnType("character varying")
+                .HasColumnName("season");
+
+            entity.HasOne(d => d.League).WithMany(p => p.TeamSeasonLeagues)
+                .HasForeignKey(d => d.LeagueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_team_season_league_league");
+
+            entity.HasOne(d => d.Team).WithMany(p => p.TeamSeasonLeagues)
+                .HasForeignKey(d => d.TeamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_team_season_league_team");
         });
 
         modelBuilder.Entity<TeamSeasonStatistic>(entity =>

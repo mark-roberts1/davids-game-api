@@ -21,6 +21,8 @@ public partial class Team
 
     public virtual ICollection<ListEntry> ListEntries { get; set; } = new List<ListEntry>();
 
+    public virtual ICollection<TeamSeasonLeague> TeamSeasonLeagues { get; set; } = new List<TeamSeasonLeague>();
+
     public virtual ICollection<TeamSeasonStatistic> TeamSeasonStatistics { get; set; } = new List<TeamSeasonStatistic>();
 
     public virtual ICollection<Venue> Venues { get; set; } = new List<Venue>();
