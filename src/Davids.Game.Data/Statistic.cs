@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Davids.Game.Data;
+﻿namespace Davids.Game.Data;
 
 public partial class Statistic
 {
     public long Id { get; set; }
 
-    public short Type { get; set; }
+    public short StatisticTypeId { get; set; }
 
-    public byte[] Value { get; set; } = null!;
+    public string Value { get; set; } = null!;
+
+    public short StatisticDataTypeId { get; set; }
+
+    public virtual StatisticDataType StatisticDataType { get; set; } = null!;
+
+    public virtual StatisticType StatisticType { get; set; } = null!;
 
     public virtual ICollection<TeamSeasonStatistic> TeamSeasonStatistics { get; set; } = new List<TeamSeasonStatistic>();
 

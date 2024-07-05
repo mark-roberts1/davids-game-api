@@ -1,9 +1,4 @@
 ﻿using Davids.Game.Models.IdentityProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Davids.Game.IdentityProviders;
 public interface IIdentityProvidersRepository

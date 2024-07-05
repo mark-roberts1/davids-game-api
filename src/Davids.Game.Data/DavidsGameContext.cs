@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Davids.Game.Data;
 
@@ -24,6 +22,10 @@ public partial class DavidsGameContext : DbContext
     public virtual DbSet<Pool> Pools { get; set; }
 
     public virtual DbSet<Statistic> Statistics { get; set; }
+
+    public virtual DbSet<StatisticDataType> StatisticDataTypes { get; set; }
+
+    public virtual DbSet<StatisticType> StatisticTypes { get; set; }
 
     public virtual DbSet<Team> Teams { get; set; }
 
@@ -198,8 +200,47 @@ public partial class DavidsGameContext : DbContext
             entity.ToTable("statistic", "game");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Type).HasColumnName("type");
-            entity.Property(e => e.Value).HasColumnName("value");
+            entity.Property(e => e.StatisticDataTypeId).HasColumnName("statistic_data_type_id");
+            entity.Property(e => e.StatisticTypeId).HasColumnName("statistic_type_id");
+            entity.Property(e => e.Value)
+                .HasColumnType("character varying")
+                .HasColumnName("value");
+
+            entity.HasOne(d => d.StatisticDataType).WithMany(p => p.Statistics)
+                .HasForeignKey(d => d.StatisticDataTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_statistic_statistic_data_type");
+
+            entity.HasOne(d => d.StatisticType).WithMany(p => p.Statistics)
+                .HasForeignKey(d => d.StatisticTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_statistic_statistic_type");
+        });
+
+        modelBuilder.Entity<StatisticDataType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("statistic_data_type_pkey");
+
+            entity.ToTable("statistic_data_type", "game");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<StatisticType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("statistic_type_pkey");
+
+            entity.ToTable("statistic_type", "game");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<Team>(entity =>

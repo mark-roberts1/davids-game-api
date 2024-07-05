@@ -1,5 +1,4 @@
-﻿using Davids.Game.Data;
-using Davids.Game.Models;
+﻿using Davids.Game.Models;
 using Davids.Game.Models.Leagues;
 using Davids.Game.Models.Teams;
 

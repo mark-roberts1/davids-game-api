@@ -1,9 +1,7 @@
-﻿namespace Davids.Game.Data;
+﻿namespace Davids.Game.Models.Pools;
 
-public partial class Pool
+public class PoolWriteRequest
 {
-    public long Id { get; set; }
-
     public string Name { get; set; } = null!;
 
     public int? LeagueId { get; set; }
@@ -13,8 +11,4 @@ public partial class Pool
     public string? DiscordServerId { get; set; }
 
     public string JoinCode { get; set; } = null!;
-
-    public virtual League? League { get; set; }
-
-    public virtual ICollection<UserPool> UserPools { get; set; } = new List<UserPool>();
 }

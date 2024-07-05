@@ -1,9 +1,6 @@
 ﻿namespace Davids.Game.Models.Lists;
-
-public class ListResponse
+public class ListWriteRequest
 {
-    public long Id { get; set; }
-
     public long? PreviousListId { get; set; }
 
     public ListResponse? PreviousList { get; set; }
@@ -20,5 +17,5 @@ public class ListResponse
         }
     }
 
-    public IEnumerable<ListEntryResponse> Entries { get; set; } = [];
+    public IEnumerable<ListEntryWriteRequest> Entries { get; set; } = [];
 }

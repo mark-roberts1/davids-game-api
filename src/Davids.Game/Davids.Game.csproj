@@ -12,16 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Lists\" />
-    <Folder Include="Venues\" />
-    <Folder Include="UserPools\" />
-    <Folder Include="Statistics\" />
-    <Folder Include="Pools\" />
-    <Folder Include="Teams\" />
-    <Folder Include="Users\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 

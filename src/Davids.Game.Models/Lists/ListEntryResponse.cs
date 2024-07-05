@@ -5,8 +5,6 @@ public class ListEntryResponse
 {
     public long Id { get; set; }
 
-    public long ListId { get; set; }
-
     public long TeamId { get; set; }
 
     public IEnumerable<StatisticResponse> Statistics { get; set; } = [];

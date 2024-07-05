@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Davids.Game.Models;
+﻿namespace Davids.Game.Models;
 
 public record CollectionResponse<T>(int Count, IEnumerable<T> Items);
 

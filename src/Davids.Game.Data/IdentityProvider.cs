@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Davids.Game.Data;
+﻿namespace Davids.Game.Data;
 
 public partial class IdentityProvider
 {

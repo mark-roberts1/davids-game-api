@@ -1,6 +1,6 @@
 ﻿namespace Davids.Game.Models.UserPools;
 
 [Flags]
-public enum UserPoolAttributes : long
+public enum UserPoolAttribute : long
 {
 }
