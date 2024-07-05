@@ -10,15 +10,5 @@ public class ListResponse
 
     public long UserPoolId { get; set; }
 
-    public int Version
-    {
-        get
-        {
-            int self = 1;
-
-            return self + PreviousList?.Version ?? 0;
-        }
-    }
-
     public IEnumerable<ListEntryResponse> Entries { get; set; } = [];
 }

@@ -96,6 +96,7 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.Country).WithMany(p => p.Leagues)
                 .HasForeignKey(d => d.CountryId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_league_country");
         });
 
@@ -113,11 +114,11 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.PreviousList).WithMany(p => p.InversePreviousList)
                 .HasForeignKey(d => d.PreviousListId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_list_list");
 
             entity.HasOne(d => d.UserPool).WithMany(p => p.Lists)
                 .HasForeignKey(d => d.UserPoolId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_list_user_pool");
         });
 
@@ -137,12 +138,10 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.List).WithMany(p => p.ListEntries)
                 .HasForeignKey(d => d.ListId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_list_entry_list");
 
             entity.HasOne(d => d.Team).WithMany(p => p.ListEntries)
                 .HasForeignKey(d => d.TeamId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_list_entry_team");
 
             entity.HasMany(d => d.Statistics).WithMany(p => p.ListEntries)
@@ -150,11 +149,9 @@ public partial class DavidsGameContext : DbContext
                     "ListEntryStatistic",
                     r => r.HasOne<Statistic>().WithMany()
                         .HasForeignKey("StatisticId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_list_entry_statistic_statistic"),
                     l => l.HasOne<ListEntry>().WithMany()
                         .HasForeignKey("ListEntryId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_list_entry_statistic_list_entry"),
                     j =>
                     {
@@ -190,6 +187,7 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.League).WithMany(p => p.Pools)
                 .HasForeignKey(d => d.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_pool_league");
         });
 
@@ -208,12 +206,10 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.StatisticDataType).WithMany(p => p.Statistics)
                 .HasForeignKey(d => d.StatisticDataTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_statistic_statistic_data_type");
 
             entity.HasOne(d => d.StatisticType).WithMany(p => p.Statistics)
                 .HasForeignKey(d => d.StatisticTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_statistic_statistic_type");
         });
 
@@ -266,6 +262,7 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.Country).WithMany(p => p.Teams)
                 .HasForeignKey(d => d.CountryId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_team_country");
 
             entity.HasMany(d => d.Venues).WithMany(p => p.Teams)
@@ -273,11 +270,9 @@ public partial class DavidsGameContext : DbContext
                     "TeamVenue",
                     r => r.HasOne<Venue>().WithMany()
                         .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_team_venue_venue"),
                     l => l.HasOne<Team>().WithMany()
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("fk_team_venue_team"),
                     j =>
                     {
@@ -302,12 +297,10 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.League).WithMany(p => p.TeamSeasonLeagues)
                 .HasForeignKey(d => d.LeagueId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_team_season_league_league");
 
             entity.HasOne(d => d.Team).WithMany(p => p.TeamSeasonLeagues)
                 .HasForeignKey(d => d.TeamId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_team_season_league_team");
         });
 
@@ -325,12 +318,10 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.Statistic).WithMany(p => p.TeamSeasonStatistics)
                 .HasForeignKey(d => d.StatisticId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_team_season_statistic_statistic");
 
             entity.HasOne(d => d.Team).WithMany(p => p.TeamSeasonStatistics)
                 .HasForeignKey(d => d.TeamId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_team_season_statistic_team");
         });
 
@@ -353,7 +344,6 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.IdentityProvider).WithMany(p => p.Users)
                 .HasForeignKey(d => d.IdentityProviderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_identity_provider");
         });
 
@@ -386,12 +376,10 @@ public partial class DavidsGameContext : DbContext
 
             entity.HasOne(d => d.Pool).WithMany(p => p.UserPools)
                 .HasForeignKey(d => d.PoolId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_pool_pool");
 
             entity.HasOne(d => d.User).WithMany(p => p.UserPools)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_pool_user");
         });
 

@@ -16,5 +16,5 @@ public interface ITeamsRepository
     Task<IEnumerable<LeagueSeasonResponse>> GetLeaguesAsync(long teamId, CancellationToken cancellationToken);
     Task<IEnumerable<VenueResponse>> GetVenuesAsync(long teamId, CancellationToken cancellationToken);
     Task<bool> AddLeagueAsync(long teamId, int leagueId, string season, CancellationToken cancellationToken);
-    Task SaveStatisticsAsync(long teamId, string season, IEnumerable<StatisticResponse> statistics, CancellationToken cancellationToken);
+    Task SaveStatisticsAsync(long teamId, string season, IEnumerable<StatisticWriteRequest> statistics, CancellationToken cancellationToken);
 }

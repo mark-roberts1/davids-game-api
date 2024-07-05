@@ -13,4 +13,18 @@ public static class IQueryableExtensions
 
         return (await query.ToArrayAsync(cancellationToken)).ToPageResponse(count);
     }
+
+    public static T FindLocalOrAttach<T>(this DbSet<T> entities, Func<T, bool> predicate, T defaultEntity) where T : class
+    {
+        var entity = entities.Local.SingleOrDefault(predicate);
+
+        if (entity == null)
+        {
+            entity = defaultEntity;
+
+            entities.Attach(entity);
+        }
+
+        return entity;
+    }
 }

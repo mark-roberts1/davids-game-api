@@ -14,6 +14,6 @@ public interface IPoolsRepository
 
     Task<IEnumerable<PoolUserResponse>> GetUsersAsync(long poolId, CancellationToken cancellationToken);
     Task<IEnumerable<ListResponse>> GetListsAsync(long poolId, CancellationToken cancellationToken);
-    Task<bool> AddUserAsync(long poolId, UserPoolWriteRequest request, CancellationToken cancellationToken);
+    Task<long> AddUserAsync(long poolId, UserPoolWriteRequest request, CancellationToken cancellationToken);
     Task<bool> RemoveUserAsync(long poolId, long userId, CancellationToken cancellationToken);
 }
