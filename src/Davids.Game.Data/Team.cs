@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Davids.Game.Data;
+﻿namespace Davids.Game.Data;
 
 public partial class Team
 {
@@ -20,6 +17,8 @@ public partial class Team
     public virtual Country? Country { get; set; }
 
     public virtual ICollection<ListEntry> ListEntries { get; set; } = new List<ListEntry>();
+
+    public virtual ICollection<TeamSeasonLeague> TeamSeasonLeagues { get; set; } = new List<TeamSeasonLeague>();
 
     public virtual ICollection<TeamSeasonStatistic> TeamSeasonStatistics { get; set; } = new List<TeamSeasonStatistic>();
 

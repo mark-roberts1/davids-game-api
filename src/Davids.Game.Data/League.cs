@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Davids.Game.Data;
+﻿namespace Davids.Game.Data;
 
 public partial class League
 {
@@ -20,4 +17,6 @@ public partial class League
     public virtual Country? Country { get; set; }
 
     public virtual ICollection<Pool> Pools { get; set; } = new List<Pool>();
+
+    public virtual ICollection<TeamSeasonLeague> TeamSeasonLeagues { get; set; } = new List<TeamSeasonLeague>();
 }

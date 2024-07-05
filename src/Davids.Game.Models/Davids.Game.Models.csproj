@@ -6,12 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Lists\" />
-    <Folder Include="Leagues\" />
-    <Folder Include="Users\" />
-    <Folder Include="Pools\" />
-    <Folder Include="Teams\" />
-  </ItemGroup>
-
 </Project>
