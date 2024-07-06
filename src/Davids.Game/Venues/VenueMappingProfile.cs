@@ -8,10 +8,8 @@ public class VenueMappingProfile : Profile
 {
     public VenueMappingProfile() : base()
     {
-        CreateMap<Venue, VenueResponse>()
-            .ForMember(dest => dest.Surface, opt => opt.MapFrom(src => (SurfaceType?)src.Surface));
+        CreateMap<Venue, VenueResponse>();
 
-        CreateMap<VenueWriteRequest, Venue>()
-            .ForMember(dest => dest.Surface, opt => opt.MapFrom(src => (short?)src.Surface));
+        CreateMap<VenueWriteRequest, Venue>();
     }
 }

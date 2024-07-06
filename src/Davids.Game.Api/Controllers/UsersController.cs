@@ -1,7 +1,5 @@
 ﻿using Davids.Game.Api.DiscordAuth;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Davids.Game.Api.Controllers;
 

@@ -6,7 +6,7 @@ public class VenueWriteRequest
 
     public int? Capacity { get; set; }
 
-    public SurfaceType? Surface { get; set; }
+    public short? SurfaceTypeId { get; set; }
 
     public string? ImageLink { get; set; }
 

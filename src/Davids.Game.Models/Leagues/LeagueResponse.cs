@@ -8,7 +8,7 @@ public class LeagueResponse
 
     public string Name { get; set; } = null!;
 
-    public LeagueType Type { get; set; }
+    public short LeagueTypeId { get; set; }
 
     public string? LogoLink { get; set; }
 

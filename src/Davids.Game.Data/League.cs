@@ -6,7 +6,7 @@ public partial class League
 
     public string Name { get; set; } = null!;
 
-    public short Type { get; set; }
+    public short LeagueTypeId { get; set; }
 
     public string? LogoLink { get; set; }
 
@@ -15,6 +15,8 @@ public partial class League
     public long? SourceId { get; set; }
 
     public virtual Country? Country { get; set; }
+
+    public virtual LeagueType LeagueType { get; set; } = null!;
 
     public virtual ICollection<Pool> Pools { get; set; } = new List<Pool>();
 

@@ -15,6 +15,8 @@ public partial class DavidsGameContext : DbContext
 
     public virtual DbSet<League> Leagues { get; set; }
 
+    public virtual DbSet<LeagueType> LeagueTypes { get; set; }
+
     public virtual DbSet<List> Lists { get; set; }
 
     public virtual DbSet<ListEntry> ListEntries { get; set; }
@@ -26,6 +28,8 @@ public partial class DavidsGameContext : DbContext
     public virtual DbSet<StatisticDataType> StatisticDataTypes { get; set; }
 
     public virtual DbSet<StatisticType> StatisticTypes { get; set; }
+
+    public virtual DbSet<SurfaceType> SurfaceTypes { get; set; }
 
     public virtual DbSet<Team> Teams { get; set; }
 
@@ -85,6 +89,7 @@ public partial class DavidsGameContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
+            entity.Property(e => e.LeagueTypeId).HasColumnName("league_type_id");
             entity.Property(e => e.LogoLink)
                 .HasColumnType("character varying")
                 .HasColumnName("logo_link");
@@ -92,12 +97,27 @@ public partial class DavidsGameContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("name");
             entity.Property(e => e.SourceId).HasColumnName("source_id");
-            entity.Property(e => e.Type).HasColumnName("type");
 
             entity.HasOne(d => d.Country).WithMany(p => p.Leagues)
                 .HasForeignKey(d => d.CountryId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_league_country");
+
+            entity.HasOne(d => d.LeagueType).WithMany(p => p.Leagues)
+                .HasForeignKey(d => d.LeagueTypeId)
+                .HasConstraintName("fk_league_league_type");
+        });
+
+        modelBuilder.Entity<LeagueType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("league_type_pkey");
+
+            entity.ToTable("league_type", "game");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
         });
 
         modelBuilder.Entity<List>(entity =>
@@ -232,6 +252,18 @@ public partial class DavidsGameContext : DbContext
             entity.HasKey(e => e.Id).HasName("statistic_type_pkey");
 
             entity.ToTable("statistic_type", "game");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<SurfaceType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("surface_type_pkey");
+
+            entity.ToTable("surface_type", "game");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name)
@@ -400,7 +432,12 @@ public partial class DavidsGameContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("name");
             entity.Property(e => e.SourceId).HasColumnName("source_id");
-            entity.Property(e => e.Surface).HasColumnName("surface");
+            entity.Property(e => e.SurfaceTypeId).HasColumnName("surface_type_id");
+
+            entity.HasOne(d => d.SurfaceType).WithMany(p => p.Venues)
+                .HasForeignKey(d => d.SurfaceTypeId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_venue_surface_type");
         });
 
         OnModelCreatingPartial(modelBuilder);

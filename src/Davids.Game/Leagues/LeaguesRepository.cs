@@ -101,9 +101,9 @@ internal class LeaguesRepository(IDbContextFactory<DavidsGameContext> contextFac
             query = query.Where(l => l.Name == request.Name);
         }
 
-        if (request.LeagueType != null)
+        if (request.LeagueTypeId != null)
         {
-            query = query.Where(l => l.Type == (short)request.LeagueType);
+            query = query.Where(l => l.LeagueTypeId == request.LeagueTypeId);
         }
 
         if (request.CountryId != null)

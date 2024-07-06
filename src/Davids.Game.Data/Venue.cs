@@ -8,11 +8,13 @@ public partial class Venue
 
     public int? Capacity { get; set; }
 
-    public short? Surface { get; set; }
+    public short? SurfaceTypeId { get; set; }
 
     public string? ImageLink { get; set; }
 
     public long? SourceId { get; set; }
+
+    public virtual SurfaceType? SurfaceType { get; set; }
 
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
 }
