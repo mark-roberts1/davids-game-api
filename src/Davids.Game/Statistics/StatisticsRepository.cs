@@ -1,6 +1,6 @@
 ﻿using Davids.Game.Data;
 using Davids.Game.DependencyInjection;
-using Davids.Game.Models.Statistics;
+using Davids.Game.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Davids.Game.Statistics;

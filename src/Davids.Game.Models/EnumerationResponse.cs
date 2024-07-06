@@ -1,4 +1,4 @@
-﻿namespace Davids.Game.Models.Statistics;
+﻿namespace Davids.Game.Models;
 
 public class EnumerationResponse
 {

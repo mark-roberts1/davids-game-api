@@ -1,4 +1,4 @@
-﻿using Davids.Game.Models.Statistics;
+﻿using Davids.Game.Models;
 
 namespace Davids.Game.Statistics;
 

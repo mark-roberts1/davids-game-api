@@ -1,7 +1,7 @@
-﻿using Davids.Game.Models.IdentityProviders;
+﻿using Davids.Game.Models;
 
 namespace Davids.Game.IdentityProviders;
 public interface IIdentityProvidersRepository
 {
-    Task<IEnumerable<IdentityProviderResponse>> GetIdentityProvidersAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<EnumerationResponse>> GetIdentityProvidersAsync(CancellationToken cancellationToken);
 }
