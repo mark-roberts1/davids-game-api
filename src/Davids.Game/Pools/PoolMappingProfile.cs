@@ -8,7 +8,7 @@ namespace Davids.Game.Pools;
 
 public class PoolMappingProfile : Profile
 {
-    PoolMappingProfile() : base()
+    public PoolMappingProfile() : base()
     {
         CreateMap<Pool, PoolResponse>();
 
