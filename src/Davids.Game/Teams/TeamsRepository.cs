@@ -7,6 +7,7 @@ using Davids.Game.Models.Statistics;
 using Davids.Game.Models.Teams;
 using Davids.Game.Models.Venues;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Davids.Game.Teams;
 
@@ -27,6 +28,21 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
         await context.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task AddVenueAsync(long teamId, long venueId, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        using var connection = context.Database.GetDbConnection();
+        using var command = connection.CreateCommand();
+
+        command.CommandText = "INSERT INTO game.team_venue(team_id, venue_id) VALUES (@team_id, @venue_id);";
+        command.Parameters.Add(new NpgsqlParameter("@team_id", teamId));
+        command.Parameters.Add(new NpgsqlParameter("@venue_id", venueId));
+
+        await connection.OpenAsync(cancellationToken);
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<long> CreateTeamAsync(TeamWriteRequest request, CancellationToken cancellationToken)
@@ -90,6 +106,17 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         var team = await context.Teams.SingleOrDefaultAsync(t => t.Id == teamId, cancellationToken);
+
+        if (team == null) return null;
+
+        return mapper.Map<TeamResponse>(team);
+    }
+
+    public async Task<TeamResponse?> GetTeamBySourceIdAsync(long sourceId, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var team = await context.Teams.SingleOrDefaultAsync(t => t.SourceId == sourceId, cancellationToken);
 
         if (team == null) return null;
 

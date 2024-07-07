@@ -14,7 +14,7 @@ internal class UsersRepository(IDbContextFactory<DavidsGameContext> contextFacto
     {
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
-        var user = mapper.Map<User>(context);
+        var user = mapper.Map<User>(request);
 
         await context.Users.AddAsync(user, cancellationToken);
 
@@ -57,6 +57,30 @@ internal class UsersRepository(IDbContextFactory<DavidsGameContext> contextFacto
         if (user == null) return null;
 
         return mapper.Map<UserResponse>(user);
+    }
+
+    public async Task<UserPoolResponse?> GetUserPoolAsync(long userPoolId, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await context
+            .UserPools
+                .Include(up => up.Pool)
+            .Where(up => up.Id == userPoolId)
+            .Select(up => mapper.Map<UserPoolResponse>(up))
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<UserPoolResponse?> GetUserPoolAsync(long userId, long poolId, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await context
+            .UserPools
+                .Include(up => up.Pool)
+            .Where(up => up.UserId == userId && up.PoolId == poolId)
+            .Select(up => mapper.Map<UserPoolResponse>(up))
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<bool> UpdateUserAsync(long userId, UserWriteRequest request, CancellationToken cancellationToken)

@@ -10,6 +10,8 @@ public partial class User
 
     public string Name { get; set; } = null!;
 
+    public string Avatar { get; set; } = null!;
+
     public virtual IdentityProvider IdentityProvider { get; set; } = null!;
 
     public virtual ICollection<UserPool> UserPools { get; set; } = new List<UserPool>();

@@ -6,6 +6,8 @@ namespace Davids.Game.Api.DiscordAuth;
 
 public class DiscordAuthorizationMiddleware(RequestDelegate next, ILogger<DiscordAuthorizationMiddleware> logger)
 {
+    private const short DISCORD_ID_PROVIDER = 1;
+
     public async Task InvokeAsync(HttpContext context)
     {
         var endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
@@ -39,6 +41,7 @@ public class DiscordAuthorizationMiddleware(RequestDelegate next, ILogger<Discor
 
                 context.User = new ClaimsPrincipal(new ClaimsIdentity("Discord"));
 
+                context.User.Identities.First().AddClaim(new("identity_provider", DISCORD_ID_PROVIDER.ToString()));
                 context.User.Identities.First().AddClaim(new("id", user.Id));
                 context.User.Identities.First().AddClaim(new("username", user.Username));
                 context.User.Identities.First().AddClaim(new("avatar", user.Avatar));

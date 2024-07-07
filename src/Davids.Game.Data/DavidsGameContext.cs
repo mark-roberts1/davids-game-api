@@ -373,6 +373,9 @@ public partial class DavidsGameContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
+            entity.Property(e => e.Avatar)
+                .HasColumnType("character varying")
+                .HasColumnName("avatar");
 
             entity.HasOne(d => d.IdentityProvider).WithMany(p => p.Users)
                 .HasForeignKey(d => d.IdentityProviderId)

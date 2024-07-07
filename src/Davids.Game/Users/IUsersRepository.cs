@@ -6,6 +6,8 @@ namespace Davids.Game.Users;
 public interface IUsersRepository
 {
     Task<UserResponse?> GetUserAsync(long userId, CancellationToken cancellationToken);
+    Task<UserPoolResponse?> GetUserPoolAsync(long userPoolId, CancellationToken cancellationToken);
+    Task<UserPoolResponse?> GetUserPoolAsync(long userId, long poolId, CancellationToken cancellationToken);
     Task<UserResponse?> GetUserAsync(short identityProviderId, string id, CancellationToken cancellationToken);
     Task<long> CreateUserAsync(UserWriteRequest request, CancellationToken cancellationToken);
     Task<bool> UpdateUserAsync(long userId, UserWriteRequest request, CancellationToken cancellationToken);

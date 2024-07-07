@@ -1,17 +1,27 @@
 ﻿using Davids.Game.Api.DiscordAuth;
+using Davids.Game.Models;
+using Davids.Game.Models.UserPools;
+using Davids.Game.Models.Users;
+using Davids.Game.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Davids.Game.Api.Controllers;
 
 [Route("api/users")]
-[ApiController]
-public class UsersController : ControllerBase
+[ApiController, DiscordAuthorize]
+public class UsersController(IUserService service, IUsersRepository repository) : ControllerBase
 {
-    [HttpGet, Route("me"), DiscordAuthorize]
-    public async Task<IActionResult> GetSelfAsync(CancellationToken cancellationToken)
+    [HttpGet, Route("me")]
+    public async Task<UserResponse> GetSelfAsync(CancellationToken cancellationToken)
     {
-        var user = this.User;
+        return await service.GetUserAsync(this.User, cancellationToken);
+    }
 
-        return Ok(this.User.Claims.ToDictionary(c => c.Type, c => c.Value));
+    [HttpGet, Route("me/pools")]
+    public async Task<CollectionResponse<UserPoolResponse>> GetPoolsAsync(CancellationToken cancellationToken)
+    {
+        var user = await service.GetUserAsync(this.User, cancellationToken);
+
+        return (await repository.GetPoolsAsync(user.Id, cancellationToken)).ToCollectionResponse();
     }
 }

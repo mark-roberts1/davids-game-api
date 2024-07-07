@@ -25,6 +25,28 @@ internal class LeaguesRepository(IDbContextFactory<DavidsGameContext> contextFac
         return entity.Id;
     }
 
+    public async Task<IEnumerable<EnumerationResponse>> GetLeagueTypesAsync(CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await context
+            .LeagueTypes
+            .Select(t => new EnumerationResponse { Id = t.Id, Name = t.Name })
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<short> AddLeagueTypeAsync(string name, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var type = new LeagueType() { Name = name };
+        context.LeagueTypes.Add(type);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return type.Id;
+    }
+
     public async Task<bool> DeleteLeagueAsync(int leagueId, CancellationToken cancellationToken)
     {
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);

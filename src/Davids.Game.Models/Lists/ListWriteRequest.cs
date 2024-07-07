@@ -3,7 +3,7 @@ public class ListWriteRequest
 {
     public long? PreviousListId { get; set; }
 
-    public long UserPoolId { get; set; }
+    public long PoolId { get; set; }
 
     public IEnumerable<ListEntryWriteRequest> Entries { get; set; } = [];
 }

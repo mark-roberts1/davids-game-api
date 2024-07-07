@@ -17,7 +17,8 @@ public class PoolMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User.Id))
             .ForMember(dest => dest.IdentityProviderId, opt => opt.MapFrom(src => src.User.IdentityProviderId))
             .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.User.ExternalId))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name));
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
+            .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar));
 
         CreateMap<PoolWriteRequest, Pool>();
     }

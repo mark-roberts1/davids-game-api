@@ -14,6 +14,7 @@ public class UserMappingProfile : Profile
 
         CreateMap<UserPool, UserPoolResponse>()
             .ForMember(dest => dest.UserPoolId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => (UserPoolAttribute)src.Attributes))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Pool.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Pool.Name))

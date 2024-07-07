@@ -10,11 +10,12 @@ namespace Davids.Game.Lists;
 [Service<IListsRepository>]
 internal class ListsRepository(IDbContextFactory<DavidsGameContext> contextFactory, IMapper mapper) : IListsRepository
 {
-    public async Task<long> CreateListAsync(ListWriteRequest request, CancellationToken cancellationToken)
+    public async Task<long> CreateListAsync(long userPoolId, ListWriteRequest request, CancellationToken cancellationToken)
     {
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         var entity = mapper.Map<List>(request);
+        entity.UserPoolId = userPoolId;
 
         context.Lists.Add(entity);
 
@@ -57,7 +58,7 @@ internal class ListsRepository(IDbContextFactory<DavidsGameContext> contextFacto
         return mapper.Map<ListResponse>(list);
     }
 
-    public async Task<bool> UpdateListAsync(long listId, ListWriteRequest request, CancellationToken cancellationToken)
+    public async Task<bool> UpdateListAsync(long listId, long userPoolId, ListWriteRequest request, CancellationToken cancellationToken)
     {
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -75,8 +76,7 @@ internal class ListsRepository(IDbContextFactory<DavidsGameContext> contextFacto
         }
 
         context.Entry(list).Property(l => l.PreviousListId).CurrentValue = request.PreviousListId;
-        context.Entry(list).Property(l => l.PreviousListId).CurrentValue = request.PreviousListId;
-        context.Entry(list).Property(l => l.UserPoolId).CurrentValue = request.UserPoolId;
+        context.Entry(list).Property(l => l.UserPoolId).CurrentValue = userPoolId;
 
         entries = request.Entries.Select(e => mapper.Map<ListEntry>(e)).ToList();
 

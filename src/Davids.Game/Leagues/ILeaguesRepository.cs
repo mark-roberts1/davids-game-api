@@ -6,6 +6,8 @@ namespace Davids.Game.Leagues;
 
 public interface ILeaguesRepository
 {
+    Task<IEnumerable<EnumerationResponse>> GetLeagueTypesAsync(CancellationToken cancellationToken);
+    Task<short> AddLeagueTypeAsync(string name, CancellationToken cancellationToken);
     Task<PageResponse<LeagueResponse>> SearchLeaguesAsync(LeagueSearchRequest request, CancellationToken cancellationToken);
     Task<LeagueResponse?> GetLeagueAsync(int leagueId, CancellationToken cancellationToken);
     Task<int> CreateLeagueAsync(LeagueWriteRequest request, CancellationToken cancellationToken);
