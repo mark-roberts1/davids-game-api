@@ -3,6 +3,7 @@ using Davids.Game.IdentityProviders;
 using Davids.Game.Leagues;
 using Davids.Game.Lists;
 using Davids.Game.Pools;
+using Davids.Game.Seasons;
 using Davids.Game.Statistics;
 using Davids.Game.Teams;
 using Davids.Game.Users;
@@ -21,4 +22,5 @@ public interface IRepository
     public ITeamsRepository Teams { get; }
     public IUsersRepository Users { get; }
     public IVenuesRepository Venues { get; }
+    public ISeasonsRepository Seasons { get; }
 }

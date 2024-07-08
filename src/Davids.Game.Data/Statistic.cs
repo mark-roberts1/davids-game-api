@@ -14,7 +14,7 @@ public partial class Statistic
 
     public virtual StatisticType StatisticType { get; set; } = null!;
 
-    public virtual ICollection<TeamSeasonStatistic> TeamSeasonStatistics { get; set; } = new List<TeamSeasonStatistic>();
+    public virtual ICollection<TeamStatistic> TeamStatistics { get; set; } = new List<TeamStatistic>();
 
     public virtual ICollection<ListEntry> ListEntries { get; set; } = new List<ListEntry>();
 }

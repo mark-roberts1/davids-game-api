@@ -3,7 +3,6 @@ using Davids.Game.Data;
 using Davids.Game.DependencyInjection;
 using Davids.Game.Extensions;
 using Davids.Game.Models.Leagues;
-using Davids.Game.Models.Statistics;
 using Davids.Game.Models.Teams;
 using Davids.Game.Models.Venues;
 using Microsoft.EntityFrameworkCore;
@@ -88,19 +87,6 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<StatisticResponse>> GetStatisticsAsync(long teamId, string season, CancellationToken cancellationToken)
-    {
-        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
-
-        return await context
-            .TeamSeasonStatistics
-                .Include(tss => tss.Statistic)
-            .Where(tss => tss.TeamId == teamId && tss.Season == season)
-            .Distinct()
-            .Select(tss => mapper.Map<StatisticResponse>(tss.Statistic))
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<TeamResponse?> GetTeamAsync(long teamId, CancellationToken cancellationToken)
     {
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
@@ -132,26 +118,6 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
             .Where(v => v.Teams.Any(t => t.Id == teamId))
             .Select(v => mapper.Map<VenueResponse>(v))
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task SaveStatisticsAsync(long teamId, string season, IEnumerable<StatisticWriteRequest> requests, CancellationToken cancellationToken)
-    {
-        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
-
-        var tss = await context.TeamSeasonStatistics.Where(tss => tss.TeamId == teamId &&  tss.Season == season).ToListAsync(cancellationToken);
-
-        if (tss != null)
-        {
-            context.TeamSeasonStatistics.RemoveRange(tss);
-        }
-
-        var statistics = requests.Select(r => mapper.Map<Statistic>(r)).ToList();
-
-        tss = statistics.Select(s => new TeamSeasonStatistic { Statistic = s, TeamId = teamId, Season = season }).ToList();
-
-        context.TeamSeasonStatistics.AddRange(tss);
-
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> UpdateTeamAsync(long teamId, TeamWriteRequest request, CancellationToken cancellationToken)

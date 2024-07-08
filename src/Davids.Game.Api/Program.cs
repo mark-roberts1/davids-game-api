@@ -3,10 +3,12 @@ using Davids.Game.Api.HostedServices;
 using Davids.Game.Api.OperationFilters;
 using Davids.Game.Data;
 using Davids.Game.DependencyInjection;
+using Davids.Game.Models.Leagues;
 using Davids.Game.SportsApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Threading.Channels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +60,13 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<AuthorizeOperationFilter>();
 });
 
-builder.Services.AddHostedService<DataPrimerService>();
+var channel = Channel.CreateUnbounded<LeagueSeasonStatsRequest>();
+
+builder.Services.AddSingleton(channel);
+builder.Services.AddSingleton(channel.Writer);
+builder.Services.AddSingleton(channel.Reader);
+
+builder.Services.AddHostedService<LeagueDataLoader>();
 
 var app = builder.Build();
 

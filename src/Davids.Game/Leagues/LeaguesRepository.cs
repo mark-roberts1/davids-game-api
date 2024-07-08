@@ -80,7 +80,7 @@ internal class LeaguesRepository(IDbContextFactory<DavidsGameContext> contextFac
     public async Task<PageResponse<TeamResponse>> GetTeamsAsync(int leagueId, string? season, int? pageNumber, int? pageSize, CancellationToken cancellationToken)
     {
         pageNumber ??= 1;
-        pageSize ??= 100;
+        pageSize ??= int.MaxValue;
 
         await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 

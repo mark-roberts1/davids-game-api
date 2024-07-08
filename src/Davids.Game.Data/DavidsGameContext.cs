@@ -23,6 +23,8 @@ public partial class DavidsGameContext : DbContext
 
     public virtual DbSet<Pool> Pools { get; set; }
 
+    public virtual DbSet<Season> Seasons { get; set; }
+
     public virtual DbSet<Statistic> Statistics { get; set; }
 
     public virtual DbSet<StatisticDataType> StatisticDataTypes { get; set; }
@@ -35,7 +37,7 @@ public partial class DavidsGameContext : DbContext
 
     public virtual DbSet<TeamSeasonLeague> TeamSeasonLeagues { get; set; }
 
-    public virtual DbSet<TeamSeasonStatistic> TeamSeasonStatistics { get; set; }
+    public virtual DbSet<TeamStatistic> TeamStatistics { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -211,6 +213,23 @@ public partial class DavidsGameContext : DbContext
                 .HasConstraintName("fk_pool_league");
         });
 
+        modelBuilder.Entity<Season>(entity =>
+        {
+            entity.HasKey(e => new { e.LeagueId, e.Year }).HasName("season_pkey");
+
+            entity.ToTable("season", "game");
+
+            entity.Property(e => e.LeagueId).HasColumnName("league_id");
+            entity.Property(e => e.Year).HasColumnName("year");
+            entity.Property(e => e.Current).HasColumnName("current");
+            entity.Property(e => e.EndDate).HasColumnName("end_date");
+            entity.Property(e => e.StartDate).HasColumnName("start_date");
+
+            entity.HasOne(d => d.League).WithMany(p => p.Seasons)
+                .HasForeignKey(d => d.LeagueId)
+                .HasConstraintName("fk_season_league");
+        });
+
         modelBuilder.Entity<Statistic>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("statistic_pkey");
@@ -336,25 +355,38 @@ public partial class DavidsGameContext : DbContext
                 .HasConstraintName("fk_team_season_league_team");
         });
 
-        modelBuilder.Entity<TeamSeasonStatistic>(entity =>
+        modelBuilder.Entity<TeamStatistic>(entity =>
         {
-            entity.HasKey(e => new { e.TeamId, e.Season, e.StatisticId }).HasName("team_season_statistic_pkey");
+            entity.HasKey(e => e.Id).HasName("team_statistic_pkey");
 
-            entity.ToTable("team_season_statistic", "game");
+            entity.ToTable("team_statistic", "game");
 
-            entity.Property(e => e.TeamId).HasColumnName("team_id");
-            entity.Property(e => e.Season)
-                .HasColumnType("character varying")
-                .HasColumnName("season");
+            entity.HasIndex(e => new { e.LeagueId, e.Year }, "ix_team_statistic__league_id");
+
+            entity.HasIndex(e => new { e.TeamId, e.Year }, "ix_team_statistic__team_id");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.LeagueId).HasColumnName("league_id");
             entity.Property(e => e.StatisticId).HasColumnName("statistic_id");
+            entity.Property(e => e.TeamId).HasColumnName("team_id");
+            entity.Property(e => e.Week).HasColumnName("week");
+            entity.Property(e => e.Year).HasColumnName("year");
 
-            entity.HasOne(d => d.Statistic).WithMany(p => p.TeamSeasonStatistics)
+            entity.HasOne(d => d.League).WithMany(p => p.TeamStatistics)
+                .HasForeignKey(d => d.LeagueId)
+                .HasConstraintName("fk_team_statistic_league");
+
+            entity.HasOne(d => d.Statistic).WithMany(p => p.TeamStatistics)
                 .HasForeignKey(d => d.StatisticId)
-                .HasConstraintName("fk_team_season_statistic_statistic");
+                .HasConstraintName("fk_team_statistic_statistic");
 
-            entity.HasOne(d => d.Team).WithMany(p => p.TeamSeasonStatistics)
+            entity.HasOne(d => d.Team).WithMany(p => p.TeamStatistics)
                 .HasForeignKey(d => d.TeamId)
-                .HasConstraintName("fk_team_season_statistic_team");
+                .HasConstraintName("fk_team_statistic_team");
+
+            entity.HasOne(d => d.Season).WithMany(p => p.TeamStatistics)
+                .HasForeignKey(d => new { d.LeagueId, d.Year })
+                .HasConstraintName("fk_team_statistic_season");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -366,6 +398,9 @@ public partial class DavidsGameContext : DbContext
             entity.HasIndex(e => new { e.IdentityProviderId, e.ExternalId }, "ix_user__identity_provider_id__external_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Avatar)
+                .HasColumnType("character varying")
+                .HasColumnName("avatar");
             entity.Property(e => e.ExternalId)
                 .HasColumnType("character varying")
                 .HasColumnName("external_id");
@@ -373,9 +408,6 @@ public partial class DavidsGameContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
-            entity.Property(e => e.Avatar)
-                .HasColumnType("character varying")
-                .HasColumnName("avatar");
 
             entity.HasOne(d => d.IdentityProvider).WithMany(p => p.Users)
                 .HasForeignKey(d => d.IdentityProviderId)

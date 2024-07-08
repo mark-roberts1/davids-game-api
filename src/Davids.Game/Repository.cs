@@ -4,6 +4,7 @@ using Davids.Game.IdentityProviders;
 using Davids.Game.Leagues;
 using Davids.Game.Lists;
 using Davids.Game.Pools;
+using Davids.Game.Seasons;
 using Davids.Game.Statistics;
 using Davids.Game.Teams;
 using Davids.Game.Users;
@@ -21,4 +22,5 @@ internal record Repository(
     IStatisticsRepository Statistics,
     ITeamsRepository Teams,
     IUsersRepository Users,
-    IVenuesRepository Venues) : IRepository;
+    IVenuesRepository Venues,
+    ISeasonsRepository Seasons) : IRepository;

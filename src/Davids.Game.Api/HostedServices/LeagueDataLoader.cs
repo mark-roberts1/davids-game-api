@@ -3,9 +3,9 @@ using Davids.Game.SportsApi;
 
 namespace Davids.Game.Api.HostedServices;
 
-public class DataPrimerService(SportsApiHttpClient sportsApi, IRepository repository, IConfiguration configuration) : BackgroundService
+public class LeagueDataLoader(SportsApiHttpClient sportsApi, IRepository repository, IConfiguration configuration) : BackgroundService
 {
-    private bool Enabled => configuration.GetValue<bool>("DataLoader:Enabled");
+    private bool Enabled => configuration.GetValue<bool>("LeagueDataLoader:Enabled");
 
     private DateTime lastRan = DateTime.MinValue;
 
@@ -13,12 +13,14 @@ public class DataPrimerService(SportsApiHttpClient sportsApi, IRepository reposi
     {
         var current = DateTime.Now.Year;
 
-        for (var year = current - 2; year < current + 2; year++)
+        for (var year = current - 1; year < current + 1; year++)
             yield return year.ToString();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await Task.Yield();
+
         if (!Enabled) return;
 
         while (!stoppingToken.IsCancellationRequested)
@@ -150,7 +152,46 @@ public class DataPrimerService(SportsApiHttpClient sportsApi, IRepository reposi
                 cancellationToken);
         }
 
+        await SaveSeasonsAsync(league.Id, leagueItem.Seasons, cancellationToken);
+
         return league.Id;
+    }
+
+    private async Task SaveSeasonsAsync(int leagueId, IEnumerable<Season> seasonRequests, CancellationToken cancellationToken)
+    {
+        var seasons = await repository.Seasons.GetSeasonsAsync(leagueId, cancellationToken);
+
+        foreach (var season in seasonRequests)
+        {
+            var existing = seasons.SingleOrDefault(s => s.Year == season.Year);
+
+            if (existing == null)
+            {
+                await repository.Seasons.CreateSeasonAsync(
+                    leagueId,
+                    season.Year,
+                    new()
+                    {
+                        StartDate = season.Start.GetDateOnly(),
+                        EndDate = season.End.GetDateOnly(),
+                        Current = season.Current,
+                    },
+                    cancellationToken);
+            }
+            else
+            {
+                await repository.Seasons.UpdateSeasonAsync(
+                    leagueId,
+                    season.Year,
+                    new()
+                    {
+                        StartDate = season.Start.GetDateOnly(),
+                        EndDate = season.End.GetDateOnly(),
+                        Current = season.Current,
+                    },
+                    cancellationToken);
+            }
+        }
     }
 
     private async Task SaveTeamAsync(string season, int leagueId, TeamResponseItem teamItem, CancellationToken cancellationToken)
@@ -214,7 +255,7 @@ public class DataPrimerService(SportsApiHttpClient sportsApi, IRepository reposi
                     Name = venueRequest.Surface,
                 };
             }
-            
+
             var teamVenues = await repository.Teams.GetVenuesAsync(team.Id, cancellationToken);
             var venue = venueRequest.Id.HasValue ? await repository.Venues.GetVenueBySourceIdAsync(venueRequest.Id.Value, cancellationToken) : null;
 
