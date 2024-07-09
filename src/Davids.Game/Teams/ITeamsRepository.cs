@@ -1,4 +1,5 @@
 ﻿using Davids.Game.Models.Leagues;
+using Davids.Game.Models.Statistics;
 using Davids.Game.Models.Teams;
 using Davids.Game.Models.Venues;
 
@@ -16,4 +17,6 @@ public interface ITeamsRepository
     Task<IEnumerable<VenueResponse>> GetVenuesAsync(long teamId, CancellationToken cancellationToken);
     Task AddVenueAsync(long teamId, long venueId, CancellationToken cancellationToken);
     Task<bool> AddLeagueAsync(long teamId, int leagueId, string season, CancellationToken cancellationToken);
+    Task<IEnumerable<StatisticResponse>> GetStatisticsAsync(long teamId, int leagueId, short year, DateTime? date, CancellationToken cancellationToken);
+    Task CreateStatisticAsync(long teamId, int leagueId, short year, DateTime date, StatisticWriteRequest request, CancellationToken cancellationToken);
 }

@@ -3,6 +3,7 @@ using Davids.Game.Data;
 using Davids.Game.DependencyInjection;
 using Davids.Game.Extensions;
 using Davids.Game.Models.Leagues;
+using Davids.Game.Models.Statistics;
 using Davids.Game.Models.Teams;
 using Davids.Game.Models.Venues;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,26 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
 
         await connection.OpenAsync(cancellationToken);
         await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task CreateStatisticAsync(long teamId, int leagueId, short year, DateTime date, StatisticWriteRequest request, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var statistic = mapper.Map<Statistic>(request);
+
+        var teamStatistic = new TeamStatistic
+        {
+            LeagueId = leagueId,
+            Year = year,
+            Statistic = statistic,
+            TeamId = teamId,
+            Week = date.GetDateOnly()
+        };
+
+        context.TeamStatistics.Add(teamStatistic);
+
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<long> CreateTeamAsync(TeamWriteRequest request, CancellationToken cancellationToken)
@@ -84,6 +105,23 @@ internal class TeamsRepository(IDbContextFactory<DavidsGameContext> contextFacto
                 .Include(t => t.League)
             .Where(t => t.TeamId == teamId)
             .Select(t => mapper.Map<LeagueSeasonResponse>(t))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<StatisticResponse>> GetStatisticsAsync(long teamId, int leagueId, short year, DateTime? date, CancellationToken cancellationToken)
+    {
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var query = context
+            .TeamStatistics
+                .Include(t => t.Statistic)
+            .Where(t => t.TeamId == teamId && t.LeagueId == leagueId && t.Year == year)
+            .AsQueryable();
+
+        if (date != null) query = query.Where(t => t.Week == date.Value.GetDateOnly());
+
+        return await query
+            .Select(t => mapper.Map<StatisticResponse>(t.Statistic))
             .ToListAsync(cancellationToken);
     }
 

@@ -6,4 +6,6 @@ public interface IStatisticsRepository
 {
     Task<IEnumerable<EnumerationResponse>> GetStatisticTypesAsync(CancellationToken cancellationToken);
     Task<IEnumerable<EnumerationResponse>> GetStatisticDataTypesAsync(CancellationToken cancellationToken);
+
+    Task<short> CreateStatisticTypeAsync(string name, CancellationToken cancellationToken);
 }

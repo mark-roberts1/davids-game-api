@@ -41,7 +41,6 @@ public class SportsApiHttpClient(HttpClient client, SportsApiConfig configuratio
 
     public async Task<TeamResponse> GetTeamsAsync(long leagueId, string season, CancellationToken cancellationToken)
     {
-
         var sw = Stopwatch.StartNew();
 
         try
@@ -56,6 +55,36 @@ public class SportsApiHttpClient(HttpClient client, SportsApiConfig configuratio
             var json = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<TeamResponse>(json)!;
+        }
+        finally
+        {
+            sw.Stop();
+
+            var timeLeft = MinTime - sw.ElapsedMilliseconds;
+
+            if (timeLeft > 0)
+            {
+                await Task.Delay((int)timeLeft, cancellationToken);
+            }
+        }
+    }
+
+    public async Task<StatisticsReponse> GetStatisticsAsync(short season, long leagueId, long teamId, DateTime date, CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"teams/statistics?league={leagueId}&season={season}&team={teamId}&date={date:yyyy-MM-dd}");
+
+            request.Headers.Add("x-rapidapi-host", "v3.football.api-sports.io");
+            request.Headers.Add("x-rapidapi-key", configuration.Token);
+
+            var response = await client.SendAsync(request, cancellationToken);
+
+            var json = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<StatisticsReponse>(json)!;
         }
         finally
         {

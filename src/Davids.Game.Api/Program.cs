@@ -67,6 +67,7 @@ builder.Services.AddSingleton(channel.Writer);
 builder.Services.AddSingleton(channel.Reader);
 
 builder.Services.AddHostedService<LeagueDataLoader>();
+builder.Services.AddHostedService<TeamStatisticsDataLoader>();
 
 var app = builder.Build();
 
