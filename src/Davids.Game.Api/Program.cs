@@ -12,6 +12,8 @@ using System.Threading.Channels;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("/fpl/secrets.json", optional: true);
+
 // Add services to the container.
 
 foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
