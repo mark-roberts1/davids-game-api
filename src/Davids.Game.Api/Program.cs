@@ -79,18 +79,15 @@ builder.Services.AddHostedService<TeamStatisticsDataLoader>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.DocumentTitle = "Fantasy Prediction League API";
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fantasy Prediction League API");
-        c.OAuthClientId(builder.Configuration.GetValue<string>("DISCORD_CLIENT_ID"));
-        c.OAuthClientSecret(builder.Configuration.GetValue<string>("DISCORD_CLIENT_SECRET"));
-        c.OAuthScopes("identify");
-    });
-}
+    c.DocumentTitle = "Fantasy Prediction League API";
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fantasy Prediction League API");
+    c.OAuthClientId(builder.Configuration.GetValue<string>("DISCORD_CLIENT_ID"));
+    c.OAuthClientSecret(builder.Configuration.GetValue<string>("DISCORD_CLIENT_SECRET"));
+    c.OAuthScopes("identify");
+});
 
 app.UseHttpsRedirection();
 
