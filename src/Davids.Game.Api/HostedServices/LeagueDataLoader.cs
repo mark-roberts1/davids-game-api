@@ -1,14 +1,12 @@
-﻿using Davids.Game.Models.SportsApi;
+﻿using Davids.Game.Models.Leagues;
+using Davids.Game.Models.SportsApi;
 using Davids.Game.SportsApi;
+using System.Threading.Channels;
 
 namespace Davids.Game.Api.HostedServices;
 
-public class LeagueDataLoader(SportsApiHttpClient sportsApi, IRepository repository, IConfiguration configuration) : BackgroundService
+public class LeagueDataLoader(SportsApiHttpClient sportsApi, IRepository repository, ChannelReader<LeagueSyncRequest> queue) : BackgroundService
 {
-    private bool Enabled => configuration.GetValue<bool>("LeagueDataLoader:Enabled");
-
-    private DateTime lastRan = DateTime.MinValue;
-
     private IEnumerable<string> GetSeasonIds()
     {
         var current = DateTime.Now.Year;
@@ -21,55 +19,48 @@ public class LeagueDataLoader(SportsApiHttpClient sportsApi, IRepository reposit
     {
         await Task.Yield();
 
-        if (!Enabled) return;
-
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (DateTime.UtcNow.AddHours(-24) > lastRan)
+            var request = await queue.ReadAsync(stoppingToken);
+
+            foreach (var season in GetSeasonIds())
             {
-                foreach (var season in GetSeasonIds())
+                try
                 {
-                    try
+                    var leagues = await sportsApi.GetLeaguesAsync(season, stoppingToken);
+
+                    foreach (var league in leagues.Response)
                     {
-                        var leagues = await sportsApi.GetLeaguesAsync(season, stoppingToken);
-
-                        foreach (var league in leagues.Response)
+                        try
                         {
-                            try
+                            var leagueId = await SaveLeagueAsync(league, stoppingToken);
+
+                            var teams = await sportsApi.GetTeamsAsync(league.League.Id, season, stoppingToken);
+
+                            foreach (var team in teams.Response)
                             {
-                                var leagueId = await SaveLeagueAsync(league, stoppingToken);
-
-                                var teams = await sportsApi.GetTeamsAsync(league.League.Id, season, stoppingToken);
-
-                                foreach (var team in teams.Response)
+                                try
                                 {
-                                    try
-                                    {
-                                        await SaveTeamAsync(season, leagueId, team, stoppingToken);
-                                    }
-                                    catch
-                                    {
-                                        await Task.Delay(60_000, stoppingToken);
-                                    }
+                                    await SaveTeamAsync(season, leagueId, team, stoppingToken);
+                                }
+                                catch
+                                {
+                                    await Task.Delay(60_000, stoppingToken);
                                 }
                             }
-                            catch
-                            {
-                                await Task.Delay(60_000, stoppingToken);
-                            }
-
                         }
-                    }
-                    catch
-                    {
-                        await Task.Delay(60_000, stoppingToken);
+                        catch
+                        {
+                            await Task.Delay(60_000, stoppingToken);
+                        }
+
                     }
                 }
-
-                lastRan = DateTime.UtcNow;
+                catch
+                {
+                    await Task.Delay(60_000, stoppingToken);
+                }
             }
-
-            await Task.Delay(1000, stoppingToken);
         }
     }
 

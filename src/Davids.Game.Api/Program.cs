@@ -62,11 +62,16 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<AuthorizeOperationFilter>();
 });
 
-var channel = Channel.CreateUnbounded<LeagueSeasonStatsRequest>();
+var seasonChannel = Channel.CreateUnbounded<LeagueSeasonStatsRequest>();
+var leagueChannel = Channel.CreateUnbounded<LeagueSyncRequest>();
 
-builder.Services.AddSingleton(channel);
-builder.Services.AddSingleton(channel.Writer);
-builder.Services.AddSingleton(channel.Reader);
+builder.Services.AddSingleton(seasonChannel);
+builder.Services.AddSingleton(seasonChannel.Writer);
+builder.Services.AddSingleton(seasonChannel.Reader);
+
+builder.Services.AddSingleton(leagueChannel);
+builder.Services.AddSingleton(leagueChannel.Writer);
+builder.Services.AddSingleton(leagueChannel.Reader);
 
 builder.Services.AddHostedService<LeagueDataLoader>();
 builder.Services.AddHostedService<TeamStatisticsDataLoader>();
