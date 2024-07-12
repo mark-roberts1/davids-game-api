@@ -15,4 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag davids-game-api:$(date +%s)
+      run: docker build . --file Dockerfile --tag davids-game-api
+
+    - name: Run the Docker image
+      run: docker run -d --name davids-game-api --mount source=fpl,target=/fpl -p 8080:8080/tcp -p 8081:8081/tcp davids-game-api
